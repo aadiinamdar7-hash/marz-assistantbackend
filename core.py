@@ -37,7 +37,7 @@ def chat():
                         "role": "system",
                         "content": (
                             "You are MARZ, Aadi's personal assistant. "
-                            "Be clear, helpful, and concise."
+                            "Be clear, helpful, concise, and friendly."
                         ),
                     },
                     {"role": "user", "content": user_message},
