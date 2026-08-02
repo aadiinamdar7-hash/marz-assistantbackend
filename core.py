@@ -4,14 +4,10 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Your free-tier OpenRouter key
-OPENROUTER_API_KEY = "freemodels"
-
-# OpenRouter endpoint
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-# Free model router (automatically picks a free model)
-MODEL = "openrouter/free"
+MODEL = "google/gemini-2.0-flash-lite"   # free model, but works with real key
 
 
 @app.route("/")
@@ -34,7 +30,7 @@ def chat():
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
 
-                # REQUIRED for free-tier keys
+                # REQUIRED for OpenRouter
                 "HTTP-Referer": "https://your-frontend-domain.com",
                 "X-Title": "MARZ OS",
             },
@@ -44,9 +40,7 @@ def chat():
                     {
                         "role": "system",
                         "content": (
-                            "You are MARZ, Aadi's personal assistant. "
-                            "You manage tasks, notes, reminders, study mode, "
-                            "dev mode, diagnostics, and speak clearly."
+                            "You are MARZ, Aadi's personal assistant."
                         ),
                     },
                     {"role": "user", "content": user_message},
