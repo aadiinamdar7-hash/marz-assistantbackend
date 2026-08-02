@@ -7,8 +7,6 @@ app = Flask(__name__)
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-MODEL = "google/gemini-2.0-flash-lite"   # free model, but works with real key
-
 
 @app.route("/")
 def home():
@@ -29,18 +27,17 @@ def chat():
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
-
-                # REQUIRED for OpenRouter
                 "HTTP-Referer": "https://marz-assistantbackend.onrender.com",
                 "X-Title": "MARZ OS",
             },
             json={
-                "model": MODEL,
+                "model": "openrouter/free",
                 "messages": [
                     {
                         "role": "system",
                         "content": (
-                            "You are MARZ, Aadi's personal assistant."
+                            "You are MARZ, Aadi's personal assistant. "
+                            "Be clear, helpful, and concise."
                         ),
                     },
                     {"role": "user", "content": user_message},
@@ -62,7 +59,7 @@ def chat():
 
     except Exception as e:
         print("Error:", e)
-        return jsonify({"reply": "MARZ backend error. Try again in a moment."}), 500
+        return jsonify({"reply": "Backend error. Try again later."}), 500
 
 
 if __name__ == "__main__":
