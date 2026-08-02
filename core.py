@@ -1,8 +1,12 @@
 import os
 import requests
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+# Allow your Netlify domain
+CORS(app, origins=["https://marzassisto.netlify.app"])
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -27,7 +31,10 @@ def chat():
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
+
+                # MUST MATCH EXACTLY
                 "HTTP-Referer": "https://marz-assistantbackend.onrender.com",
+
                 "X-Title": "MARZ OS",
             },
             json={
