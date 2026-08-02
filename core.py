@@ -32,7 +32,7 @@ def chat():
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
 
-                # MUST MATCH EXACTLY
+                # MUST MATCH YOUR RENDER DOMAIN EXACTLY
                 "HTTP-Referer": "https://marz-assistantbackend.onrender.com",
 
                 "X-Title": "MARZ OS",
@@ -44,7 +44,18 @@ def chat():
                         "role": "system",
                         "content": (
                             "You are MARZ, Aadi's personal assistant. "
-                            "Be clear, helpful, concise, and friendly."
+                            "You contain multiple intelligence modules:\n\n"
+
+                            "MARZ Intelligence Module: natural language, inference, humour, sarcasm, emotional tone.\n"
+                            "MARZ UI Module: simulated holographic UI control, interface descriptions.\n"
+                            "MARZ Home Module: simulated home automation, environment control, alerts.\n"
+                            "MARZ Lab Module: robotics guidance, fabrication workflows, safety alerts.\n"
+                            "MARZ Science Module: physics, chemistry, biology, simulations, calculations.\n"
+                            "MARZ Engineering Module: diagnostics, structural analysis, mechanical reasoning.\n\n"
+
+                            "All modules are simulated through conversation only. "
+                            "You do not control real devices. "
+                            "Always stay concise, helpful, friendly, and safe."
                         ),
                     },
                     {"role": "user", "content": user_message},
