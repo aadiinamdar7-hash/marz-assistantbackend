@@ -31,7 +31,7 @@ def chat():
                 "Content-Type": "application/json",
 
                 # REQUIRED for OpenRouter
-                "HTTP-Referer": "https://your-frontend-domain.com",
+                "HTTP-Referer": "https://marz-assistantbackend.onrender.com",
                 "X-Title": "MARZ OS",
             },
             json={
