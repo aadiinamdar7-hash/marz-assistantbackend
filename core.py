@@ -2,6 +2,7 @@ import os
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -9,6 +10,27 @@ CORS(app, origins=["https://marzassisto.netlify.app"])
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+chats = {}
+
+
+def get_today_key():
+    return datetime.utcnow().strftime("%Y-%m-%d")
+
+
+def get_or_create_today_chat():
+    key = get_today_key()
+    if key not in chats:
+        chats[key] = {
+            "date": key,
+            "messages": []
+        }
+    return chats[key]
+
+
+def trim_chat(chat):
+    if len(chat["messages"]) > 50:
+        chat["messages"] = chat["messages"][-50:]
 
 
 @app.route("/")
@@ -23,6 +45,13 @@ def chat():
 
     if not user_message:
         return jsonify({"reply": "Please say something, user."}), 400
+
+    today_chat = get_or_create_today_chat()
+    today_chat["messages"].append({
+        "role": "user",
+        "content": user_message
+    })
+    trim_chat(today_chat)
 
     try:
         response = requests.post(
@@ -103,12 +132,50 @@ def chat():
             .get("content", "MARZ had trouble replying.")
         )
 
-        return jsonify({"reply": reply})
+        today_chat["messages"].append({
+            "role": "assistant",
+            "content": reply
+        })
+        trim_chat(today_chat)
+
+        return jsonify({
+            "reply": reply,
+            "chat": today_chat
+        })
 
     except Exception as e:
         print("Error:", e)
-        return jsonify({"reply": "Backend error. Try again later."}), 500
+        return jsonify({
+            "reply": "Backend error. Try again later."
+        }), 500
+
+
+@app.route("/api/chats", methods=["GET"])
+def get_chats():
+    return jsonify({
+        "chats": list(chats.values())
+    })
+
+
+@app.route("/api/chats/<date>", methods=["DELETE"])
+def delete_chat(date):
+    if date in chats:
+        del chats[date]
+    return jsonify({
+        "status": "ok"
+    })
+
+
+@app.route("/api/chats", methods=["DELETE"])
+def delete_all_chats():
+    chats.clear()
+    return jsonify({
+        "status": "ok"
+    })
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", 5000))
+    )
